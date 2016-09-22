@@ -83,6 +83,11 @@ class FunSetSuite extends FunSuite {
     val ss4 = singletonSet(4)
     val ss5 = singletonSet(5)
     val ss6 = singletonSet(6)
+    val ss100 = singletonSet(100)
+    val ss_100 = singletonSet(-100)
+    val ss1k = singletonSet(1000)
+    val ss_1k = singletonSet(-1000)
+    val ss0 = singletonSet(0)
     val ss12 = union(ss1, ss2)
     val ss123 = union(ss12, ss3)
     val ss23 = union(ss2, ss3)
@@ -91,7 +96,10 @@ class FunSetSuite extends FunSuite {
     val ss345 = union(ss34, ss5)
     val ss45 = union(ss4, ss5)
     val ss456 = union(ss45, ss6)
-
+    val ss_1k0 = union(ss_1k, ss0)
+    val ss_1k01k = union(ss_1k0, ss1k)
+    val ss_1k0456 = union(ss_1k0, ss456)
+    val ss_1k04561k = union(ss_1k0456, ss1k)
   }
 
   /**
@@ -157,6 +165,28 @@ class FunSetSuite extends FunSuite {
       assert(!contains(fil3, 3), "3 IS in (2,3,4) and IN 3")
       assert(contains(fil3, 4), "4 IS in (2,3,4) and IS NOT 3")
       assert(!contains(fil3, 6), "6 IS NOT in (2,3,4)")
+    }
+  }
+
+  test("forall tests") {
+    new TestSets {
+      assert(forall(ss456, x => x > 3), "ALL elements of (4,5,6) are >3")
+      assert(forall(ss_1k0, x => x < 1), "ALL elements of (-1000,0) are <1")
+      assert(!forall(ss_1k0456, x => x > 0), "ALL elements of (-1000,0,4,5,6) are NOT >0")
+      assert(forall(ss_1k0456, x => x != 1000), "ALL elements of (-1000,0,4,5,6) are !=1000")
+      assert(!forall(ss_1k04561k, x => x != 1000), "ALL elements of (-1000,0,4,5,6,1000) are NOT !=1000")
+      assert(forall(ss_1k04561k, x => x != 100), "ALL elements of (-1000,0,4,5,6,1000) are !=100")
+    }
+  }
+
+  test("exists tests") {
+    new TestSets {
+      assert(exists(ss456, x => x > 3), "ALL elements of (4,5,6) are >3")
+      assert(exists(ss_1k0, x => x < -1), "element exists in (-1000,0) that is <-1")
+      assert(!exists(ss_1k0456, x => x > 100), "elements does NOT exist in (-1000,0,4,5,6) that is >100")
+      assert(exists(ss_1k0456, x => x != 1000), "element exists in (-1000,0,4,5,6) that is !=1000")
+      assert(exists(ss_1k04561k, x => x > 100), "element exists in (-1000,0,4,5,6,1000) that is >100")
+      assert(exists(ss_1k04561k, x => x < -500 ^ x > 500), "element exists in (-1000,0,4,5,6,1000) are <-500 and >500")
     }
   }
 

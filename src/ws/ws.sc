@@ -40,3 +40,15 @@ di234_345(5)
 
 val fil3 = filter(ss234, x => x != 3)
 fil3(4)
+
+def forall(s: Set, p: Int => Boolean): Boolean = {
+  def iter(a: Int): Boolean = {
+    if (a > 1000) true
+    else if (contains(s, a) & !p(a)) false
+    else iter(a + 1)
+  }
+  iter(-1000)
+}
+
+forall(ss456, x => x > 3)
+
