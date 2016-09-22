@@ -77,6 +77,21 @@ class FunSetSuite extends FunSuite {
     val s1 = singletonSet(1)
     val s2 = singletonSet(2)
     val s3 = singletonSet(3)
+    val ss1 = singletonSet(1)
+    val ss2 = singletonSet(2)
+    val ss3 = singletonSet(3)
+    val ss4 = singletonSet(4)
+    val ss5 = singletonSet(5)
+    val ss6 = singletonSet(6)
+    val ss12 = union(ss1, ss2)
+    val ss123 = union(ss12, ss3)
+    val ss23 = union(ss2, ss3)
+    val ss234 = union(ss23, ss4)
+    val ss34 = union(ss3, ss4)
+    val ss345 = union(ss34, ss5)
+    val ss45 = union(ss4, ss5)
+    val ss456 = union(ss45, ss6)
+
   }
 
   /**
@@ -86,7 +101,7 @@ class FunSetSuite extends FunSuite {
    * Once you finish your implementation of "singletonSet", exchange the
    * function "ignore" by "test".
    */
-  ignore("singletonSet(1) contains 1") {
+  test("singletonSets contains X") {
 
     /**
      * We create a new instance of the "TestSets" trait, this gives us access
@@ -97,7 +112,9 @@ class FunSetSuite extends FunSuite {
        * The string argument of "assert" is a message that is printed in case
        * the test fails. This helps identifying which assertion failed.
        */
-      assert(contains(s1, 1), "Singleton")
+      assert(contains(s1, 1), "1 IS in 1")
+      assert(!contains(s1, 2), "2 NOT in 1")
+      assert(contains(s2, 2), "2 IS in 2")
     }
   }
 
@@ -106,9 +123,41 @@ class FunSetSuite extends FunSuite {
       val s = union(s1, s2)
       assert(contains(s, 1), "Union 1")
       assert(contains(s, 2), "Union 2")
-      assert(!contains(s, 3), "Union 3")
+      assert(!contains(s, 3), "Union 3 - not in (1, 2)")
+      assert(contains(ss12, 2), "2 in (1,2)")
+      assert(!contains(ss12, 3), "3 NOT in (1,2)")
+      assert(!contains(ss456, 2), "2 NOT in (4,5,6)")
     }
   }
 
+  test("intersect contains only common elements between 2 sets") {
+    new TestSets {
+      val in234_345 = intersect(ss234, ss345)
+      assert(contains(in234_345, 3), "3 intersects (2,3,4) and (3,4,5)")
+      assert(contains(in234_345, 4), "4 intersects (2,3,4) and (3,4,5)")
+      assert(!contains(in234_345, 5), "5 does NOT intersect (2,3,4) and (3,4,5)")
+      assert(!contains(in234_345, 2), "2 does NOT intersect (2,3,4) and (3,4,5)")
+    }
+  }
+
+  test("difference between 2 sets yields elements from 1st set not in 2nd set") {
+    new TestSets {
+      val di234_345 = diff(ss234, ss345)
+      assert(contains(di234_345, 2), "2 IS in (2,3,4) and NOT in (3,4,5)")
+      assert(!contains(di234_345, 3), "3 IS in (2,3,4) and IN (3,4,5)")
+      assert(!contains(di234_345, 5), "5 IS NOT in (2,3,4)")
+      assert(!contains(di234_345, 6), "6 IS NOT in (2,3,4) nor (3,4,5)")
+    }
+  }
+
+  test("filter out 3's from the set") {
+    new TestSets {
+      val fil3 = filter(ss234, x => x != 3)
+      assert(contains(fil3, 2), "2 IS in (2,3,4) and IS NOT 3")
+      assert(!contains(fil3, 3), "3 IS in (2,3,4) and IN 3")
+      assert(contains(fil3, 4), "4 IS in (2,3,4) and IS NOT 3")
+      assert(!contains(fil3, 6), "6 IS NOT in (2,3,4)")
+    }
+  }
 
 }
